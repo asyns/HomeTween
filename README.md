@@ -1,4 +1,3 @@
-```markdown
 # HomeTween
 
 A high-performance, zero-boilerplate tweening engine for Unity. Designed for professional workflows: install via UPM and run instantly—no manual scene setup or manager placement required.
