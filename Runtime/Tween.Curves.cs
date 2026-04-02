@@ -2,6 +2,20 @@ using UnityEngine;
 
 namespace HomeTween
 {
+    public enum Curve
+    {
+        Linear,
+        EaseIn,
+        EaseOut,
+        EaseInOut,
+        BounceIn,
+        BounceOut,
+        BounceInOut,
+        ElasticIn,
+        ElasticOut,
+        ElasticInOut
+    }
+
     public static partial class Tween 
     { 
         private static TweenData _settings;
@@ -45,6 +59,10 @@ namespace HomeTween
             Debug.LogWarning($"Curve '{name}' not found in TweenData. Returning Linear as fallback.");
             return AnimationCurve.Linear(0, 0, 1, 1);
         }
-    
+
+        public static AnimationCurve GetCurve(Curve curve)
+        {
+            return GetCurve(curve.ToString());
+        }
     }
 }
