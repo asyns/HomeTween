@@ -1,0 +1,10 @@
+{
+  "name": "com.asynsstudio.tweenlib",
+  "version": "1.0.0",
+  "displayName": "HomeTween",
+  "description": "A lightweight, custom tweening engine for Unity.",
+  "unity": "6000.0",
+  "author": {
+    "name": "Asyns"
+  }
+}

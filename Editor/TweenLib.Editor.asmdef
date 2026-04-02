@@ -1,0 +1,10 @@
+{
+    "name": "TweenLib.Editor",
+    "references": [
+        "TweenLib.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}
