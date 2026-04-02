@@ -45,6 +45,15 @@ transform.Scale(Vector3.one * 2f, Tween.Params
     .SetLocal(true));
 ```
 
+### Curves
+A Resources folder at the root of your Assets folder will automatically be created containing a TweenData asset with a bunch of default Animation Curves. You can freely modify those curves and add new ones.
+To use those curves, you can do the following: 
+
+```csharp
+    Tween.Params.SetEase(Tween.ElasticOut); // fetches the Curve name "ElasticOut"
+    Tween.Params.SetEase(Tween.GetCurve("MyCustomCurve"));
+```
+
 ---
 
 ## ⛓ Sequences
