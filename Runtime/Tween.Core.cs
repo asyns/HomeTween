@@ -29,7 +29,6 @@ namespace HomeTween
         public static TweenParams Params => new TweenParams();
 
         #region Internal
-        // private static Coroutine Run(object target, TweenType type, float duration, Action<float> update, Action onComplete, bool useUnscaledTime, AnimationCurve curve)
         private static Coroutine Run(object target, TweenType type, Action<float> update, TweenParams p)
         {
             Stop(target, type); 
@@ -115,7 +114,7 @@ namespace HomeTween
         public Tween.LoopType loopType = Tween.LoopType.None;
         public RotationMode rotationMode = RotationMode.Shortest;
         public int loops = 0;
-        public float delay = 0f; // New bonus feature!
+        public float delay = 0f; 
         public TweenParams SetDuration(float d) { duration = d; return this; }
         public TweenParams SetEase(AnimationCurve c) { curve = c; return this; }
         public TweenParams SetCallback(Action cb) { onComplete = cb; return this; }
