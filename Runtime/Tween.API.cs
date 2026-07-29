@@ -104,42 +104,33 @@ namespace HomeTween
         public static Coroutine Move(this Transform target, Vector3 to, TweenParams p = null)
         {
             p ??= TweenParams.Default;
-            // Capture start position based on the setting
-            Vector3 start = p.useLocal ? target.localPosition : target.position;
-
+            Vector3 start = target.GetPosition(p.movementMode);
             return Run(target, TweenType.Move, (tValue) =>
             {
-                if (p.useLocal) target.localPosition = Vector3.Lerp(start, to, tValue);
-                else target.position = Vector3.Lerp(start, to, tValue);
+                Vector3 position = Vector3.Lerp(start, to, tValue);
+                target.SetPosition(position, p.movementMode);
             }, p);
         }
 
-        public static Coroutine MoveCurve(this Transform t, Vector3 end, Vector3 control, TweenParams p = null)
+        public static Coroutine MoveCurve(this Transform target, Vector3 end, Vector3 control, TweenParams p = null)
         {
             p ??= TweenParams.Default;
-            Vector3 start = p.useLocal ? t.localPosition : t.position;
-
-            return Run(t, TweenType.Move, (tValue) =>
+            Vector3 start = target.GetPosition(p.movementMode);
+            return Run(target, TweenType.Move, (tValue) =>
             {
                 float invT = 1f - tValue;
-                Vector3 pos = invT * invT * start + 2f * invT * tValue * control + tValue * tValue * end;
-
-                if (p.useLocal) t.localPosition = pos;
-                else t.position = pos;
+                Vector3 position = invT * invT * start + 2f * invT * tValue * control + tValue * tValue * end;
+                target.SetPosition(position, p.movementMode);
             }, p);
         }
 
-        public static Coroutine MoveArch(this Transform target, Vector3 endPos, float archHeight, TweenParams p = null)
+        public static Coroutine MoveArch(this Transform target, Vector3 end, float archHeight, TweenParams p = null)
         {
             p ??= TweenParams.Default;
-            // Calculate start based on setting so the midpoint math is consistent
-            Vector3 startPos = p.useLocal ? target.localPosition : target.position;
-
-            Vector3 midPoint = (startPos + endPos) / 2f;
-            // We use Vector3.up here, but in local space this aligns with the parent's "up"
+            Vector3 start = target.GetPosition(p.movementMode);
+            Vector3 midPoint = (start + end) / 2f;
             Vector3 controlPoint = midPoint + (Vector3.up * archHeight);
-
-            return target.MoveCurve(endPos, controlPoint, p);
+            return target.MoveCurve(end, controlPoint, p);
         }
 
         public static Coroutine Scale(this Transform target, Vector3 to, TweenParams p = null)

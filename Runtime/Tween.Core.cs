@@ -29,6 +29,41 @@ namespace HomeTween
         public static TweenParams Params => new TweenParams();
 
         #region Internal
+
+        public static Vector3 GetPosition(this Transform target, MovementMode movementMode)
+        {
+            switch (movementMode)
+            {
+                default:
+                case MovementMode.World:
+                    return target.position;
+                case MovementMode.Local:
+                    return target.localPosition;
+                case MovementMode.Anchored:
+                    if (target is RectTransform rectTransform)
+                    {
+                        return rectTransform.anchoredPosition;
+                    }
+                    return target.position;
+            }
+        }
+
+        public static void SetPosition(this Transform target, Vector3 position, MovementMode movementMode)
+        {
+            switch (movementMode)
+            {
+                case MovementMode.World:
+                    target.position = position;
+                    break;
+                case MovementMode.Local:
+                    target.localPosition = position;
+                    break;
+                case MovementMode.Anchored:
+                    (target as RectTransform).anchoredPosition = position;
+                    break;
+            }
+        }
+
         private static Coroutine Run(object target, TweenType type, Action<float> update, TweenParams p)
         {
             Stop(target, type); 
@@ -103,13 +138,14 @@ namespace HomeTween
     }
 
     public enum RotationMode { Shortest, Euler }
-
+    public enum MovementMode { World, Local, Anchored}
     public class TweenParams
     {
         public float duration = 1f;
         public Action onComplete = null;
         public bool useUnscaledTime = false;
         public bool useLocal = false;
+        public MovementMode movementMode = MovementMode.World;
         public AnimationCurve curve = null;
         public Tween.LoopType loopType = Tween.LoopType.None;
         public RotationMode rotationMode = RotationMode.Shortest;
@@ -120,6 +156,7 @@ namespace HomeTween
         public TweenParams SetCallback(Action cb) { onComplete = cb; return this; }
         public TweenParams SetLoops(Tween.LoopType type, int count) { loopType = type; loops = count; return this; }
         public TweenParams SetRotationMode(RotationMode mode) { rotationMode = mode; return this; }
+        public TweenParams SetMovementMode(MovementMode mode) { movementMode = mode; return this; }
         public TweenParams SetUnscaled(bool unscaled) { useUnscaledTime = unscaled; return this; }
         public TweenParams SetDelay(float d) { delay = d; return this; }
         public TweenParams SetLocal(bool local) { useLocal = local; return this; }
