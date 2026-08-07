@@ -2,12 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace HomeTween
 {
     public static partial class Tween
     {
-        public enum TweenType { Move, Scale, Rotate, Fade, Volume }
+        public enum TweenType { Move, Scale, Resize, Rotate, Fade, Volume, Colour }
         public enum LoopType { None, Restart, PingPong }
 
         #region Sequences
@@ -73,6 +74,7 @@ namespace HomeTween
         #endregion
         #region Transform Shortcuts
         // --- Move Shortcuts ---
+
         public static Coroutine Move(this Transform t, Vector3 target, float duration, AnimationCurve curve = null)
             => t.Move(target, new TweenParams().SetDuration(duration).SetEase(curve));
 
@@ -80,6 +82,9 @@ namespace HomeTween
             => t.MoveArch(end, height, new TweenParams().SetDuration(duration).SetEase(curve));
 
         // --- Scale & Rotate Shortcuts ---
+        public static Coroutine Resize(this RectTransform t, Vector2 target, float duration, AnimationCurve curve = null)
+            => t.Resize(target, new TweenParams().SetDuration(duration).SetEase(curve));
+
         public static Coroutine Scale(this Transform t, Vector3 to, float duration, AnimationCurve curve = null)
             => t.Scale(to, new TweenParams().SetDuration(duration).SetEase(curve));
 
@@ -100,7 +105,28 @@ namespace HomeTween
         #endregion
 
 
+        public static Coroutine Colour(this Graphic graphic, Color to, float duration, AnimationCurve curve = null)
+            => graphic.Colour(to, new TweenParams().SetDuration(duration).SetEase(curve));
+
         #region Transform with Params
+        public static Coroutine Colour(this Graphic graphic, Color to, TweenParams p = null)
+        {
+            p ??= TweenParams.Default;
+            Color from = graphic.color;
+            return Run(graphic, TweenType.Colour, t => graphic.color = Color.Lerp(from, to, t), p);
+        }
+
+        public static Coroutine Resize(this RectTransform target, Vector2 to, TweenParams p = null)
+        {
+            p ??= TweenParams.Default;
+            Vector2 from = target.sizeDelta;
+            return Run(target, TweenType.Resize, t =>
+            {
+                target.sizeDelta = Vector2.Lerp(from, to, t);
+            }, p);
+        }
+
+
         public static Coroutine Move(this Transform target, Vector3 to, TweenParams p = null)
         {
             p ??= TweenParams.Default;
