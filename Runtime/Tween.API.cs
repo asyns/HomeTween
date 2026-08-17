@@ -2,12 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace HomeTween
 {
     public static partial class Tween
     {
-        public enum TweenType { Move, Scale, Rotate, Fade, Volume }
+        public enum TweenType { Move, Scale, Resize, Rotate, Fade, Volume, Colour, OffsetMin, OffsetMax }
         public enum LoopType { None, Restart, PingPong }
 
         #region Sequences
@@ -71,6 +72,7 @@ namespace HomeTween
             }
         }
         #endregion
+
         #region Transform Shortcuts
         // --- Move Shortcuts ---
         public static Coroutine Move(this Transform t, Vector3 target, float duration, AnimationCurve curve = null)
@@ -80,6 +82,21 @@ namespace HomeTween
             => t.MoveArch(end, height, new TweenParams().SetDuration(duration).SetEase(curve));
 
         // --- Scale & Rotate Shortcuts ---
+        public static Coroutine Resize(this RectTransform t, Vector2 target, float duration, AnimationCurve curve = null)
+            => t.Resize(target, new TweenParams().SetDuration(duration).SetEase(curve));
+
+        public static Coroutine MoveAnchorMin(this RectTransform t, Vector2 target, float duration, AnimationCurve curve = null)
+            => t.MoveAnchorMin(target, new TweenParams().SetDuration(duration).SetEase(curve));
+
+        public static Coroutine MoveAnchorMax(this RectTransform t, Vector2 target, float duration, AnimationCurve curve = null)
+            => t.MoveAnchorMax(target, new TweenParams().SetDuration(duration).SetEase(curve));
+
+        public static Coroutine MoveOffsetMin(this RectTransform t, Vector2 target, float duration, AnimationCurve curve = null)
+            => t.MoveOffsetMin(target, new TweenParams().SetDuration(duration).SetEase(curve));
+
+        public static Coroutine MoveOffsetMax(this RectTransform t, Vector2 target, float duration, AnimationCurve curve = null)
+            => t.MoveOffsetMax(target, new TweenParams().SetDuration(duration).SetEase(curve));
+
         public static Coroutine Scale(this Transform t, Vector3 to, float duration, AnimationCurve curve = null)
             => t.Scale(to, new TweenParams().SetDuration(duration).SetEase(curve));
 
@@ -90,17 +107,81 @@ namespace HomeTween
             => t.Spin(axis, new TweenParams().SetDuration(duration).SetEase(curve));
         #endregion
 
-        #region UI & Audio Shortcuts
+        #region Other Shortcuts
         public static Coroutine Fade(this CanvasGroup group, float to, float duration, AnimationCurve curve = null)
             => group.Fade(to, new TweenParams().SetDuration(duration).SetEase(curve).SetUnscaled(true));
 
         public static Coroutine Volume(this AudioSource source, float to, float duration, AnimationCurve curve = null)
             => source.Volume(to, new TweenParams().SetDuration(duration).SetEase(curve));
 
+        public static Coroutine Colour(this Graphic graphic, Color to, float duration, AnimationCurve curve = null)
+            => graphic.Colour(to, new TweenParams().SetDuration(duration).SetEase(curve));
         #endregion
 
 
         #region Transform with Params
+        public static Coroutine MoveAnchorMin(this RectTransform target, Vector2 to, TweenParams p = null)
+        {
+            p ??= TweenParams.Default;
+            Vector2 from = target.anchorMin;
+            return Run(target, TweenType.Move, t =>
+            {
+                Vector2 newAnchor = Vector2.Lerp(from, to, t);
+                target.anchorMin = newAnchor;
+            }, p);
+        }
+
+        public static Coroutine MoveAnchorMax(this RectTransform target, Vector2 to, TweenParams p = null)
+        {
+            p ??= TweenParams.Default;
+            Vector2 from = target.anchorMax;
+            return Run(target, TweenType.Move, t =>
+            {
+                Vector2 newAnchor = Vector2.Lerp(from, to, t);
+                target.anchorMax = newAnchor;
+            }, p);
+        }
+
+        public static Coroutine MoveOffsetMin(this RectTransform target, Vector2 to, TweenParams p = null)
+        {
+            p ??= TweenParams.Default;
+            Vector2 from = target.offsetMin;
+            return Run(target, TweenType.OffsetMin, t =>
+            {
+                Vector2 newOffset = Vector2.Lerp(from, to, t);
+                target.offsetMin = newOffset;
+            }, p);
+        }
+
+        public static Coroutine MoveOffsetMax(this RectTransform target, Vector2 to, TweenParams p = null)
+        {
+            p ??= TweenParams.Default;
+            Vector2 from = target.offsetMax;
+            return Run(target, TweenType.OffsetMax, t =>
+            {
+                Vector2 newOffset = Vector2.Lerp(from, to, t);
+                target.offsetMax = newOffset;
+            }, p);
+        }
+
+        public static Coroutine Colour(this Graphic graphic, Color to, TweenParams p = null)
+        {
+            p ??= TweenParams.Default;
+            Color from = graphic.color;
+            return Run(graphic, TweenType.Colour, t => graphic.color = Color.Lerp(from, to, t), p);
+        }
+
+        public static Coroutine Resize(this RectTransform target, Vector2 to, TweenParams p = null)
+        {
+            p ??= TweenParams.Default;
+            Vector2 from = target.sizeDelta;
+            return Run(target, TweenType.Resize, t =>
+            {
+                target.sizeDelta = Vector2.Lerp(from, to, t);
+            }, p);
+        }
+
+
         public static Coroutine Move(this Transform target, Vector3 to, TweenParams p = null)
         {
             p ??= TweenParams.Default;
